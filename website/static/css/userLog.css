@@ -1,0 +1,98 @@
+h1{
+    color: Blue;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+
+  }
+.main-parent{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    justify-content: center;
+    color: white;
+    background: #11001C;
+    padding: 20px;
+
+}
+
+
+.qa-child-parent-left{
+    height: 95%;
+    width: 60%;
+    background-color: #11001C;
+    display: flex;
+    border: 10px solid #3A015C;
+    flex-direction: column;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+
+
+}
+
+.qa-child-parent-left img{
+    width: 90%;
+    height: 75%;
+}
+img {
+    border-radius: 10%;
+    padding: 20px;
+}
+
+
+.qa-child-parent-right{
+    height: 95%;
+    width: 40%;
+    display: flex;
+    margin: 10px;
+    flex-direction: column;
+
+
+}
+.qa-right-child1{
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border: 10px solid #3A015C;
+
+   
+}
+.output{
+    height: 50%;
+    border: 10px solid white;
+    padding: 10px;
+}
+.f{
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.f input.text-field{
+    height: 70%;
+    width: 100%;
+}
+.f input.submit-btn{
+    width: 100%;
+    height: 30%;
+}
+
+
+.qa-right-child2{
+    height: 20%;
+    border: 10px solid #3A015C;
+    padding: 20px;
+    margin-top: 10px;
+
+
+}
+
+/* Style labels 

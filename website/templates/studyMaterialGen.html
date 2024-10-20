@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Material Generator</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/studyMaterialGen.css') }}">
+    <script>
+        function toggleAnswers() {
+            var checkBox = document.getElementById("show_answers");
+            var answers = document.getElementById("answers_section");
+            if (checkBox.checked == true){
+                answers.style.display = "block";
+            } else {
+                answers.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <main>
+        <div class="flex-parent-main">
+
+                
+                <form action="/studyMaterialGen" class = "form-child" method="post">
+                    <div class= "form-child-left" >
+
+               
+                   <select name="gen_type" class = "form-child-2" id="gen_type">
+                        <option value="1">Multiple Choice</option>
+                        <option value="2">Short Answers</option>
+                        <option value="3">Essay style</option>
+                    </select> 
+                 </div>
+
+                    <div class ="form-child-right">
+                   
+           
+                    <label for="num_q" class = "form-child-3">Number of Questions</label>
+                    <input type="number" class = "form-child-4" id="num_q" name="num_q" required>
+           
+                    <label for="show_answers" class = "form-child-5" >Reveal Answers</label>
+                    <input type="checkbox"  class = "form-child-6"id="show_answers" onclick="toggleAnswers()">
+              
+                    <button class = "form-child-7 "type="submit">Generate</button>
+                </div>
+
+                <div class ="form-child-end">
+                </div>
+                </form>
+                
+            <section class = "questions-child">
+                <p class="generated-content"> <pre>{{ questions }}</pre></p>
+                
+
+            </section>
+            <section class = "answers-child" id = "answers_section" style="display:none!important" >
+                
+                <p "generated-content" >ANSWERS</p>
+                <br>
+                <p class="generated-content"> <pre>{{ answers }}</pre></p>
+
+            </section>
+
+        </div>
+    </main>
+
+</body>
+</html>

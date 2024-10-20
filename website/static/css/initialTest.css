@@ -1,0 +1,112 @@
+h1{
+    color: Blue;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+.main-parent{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    justify-content: center;
+    color: white;
+    background: #11001C;
+    padding: 20px;
+
+}
+
+
+.qa-child-parent-left{
+    height: 95%;
+    width: 50%;
+    background-color: #11001C;
+    display: flex;
+    border: 10px solid #3A015C;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    margin: 10px;
+    padding: 20px;
+
+}
+.qa-left-child1{
+    height: 80%;
+    width: 100%;
+    border: 5px solid #007BFF;
+    
+
+    
+   
+}
+.qa-left-child2{
+    height: 20%;
+    margin-top: 10px;
+
+}
+
+
+.qa-child-parent-right{
+    height: 95%;
+    border: 10px solid #3A015C;
+    width: 50%;
+    margin: 10px;
+    display: flex;
+    padding: 20px;
+    flex-direction: column;
+}
+
+.qa-right-child1{
+    height: 80%;
+    border: 5px solid #007BFF;
+
+}
+.qa-right-child1  pre {
+    white-space: pre-wrap;      /* Allows text to wrap */
+    word-wrap: break-word;      /* Break the word at the end of the line */
+    overflow-wrap: break-word;  /* Ensures the words break to prevent overflow */
+    max-width: 100%;
+    max-height: 100%;
+    overflow: auto; 
+      /* Ensures the <pre> element doesn't exceed the parent width */
+}
+.qa-left-child1  pre {
+    white-space: pre-wrap;      /* Allows text to wrap */
+    word-wrap: break-word;      /* Break the word at the end of the line */
+    overflow-wrap: break-word;  /* Ensures the words break to prevent overflow */
+    max-width: 100%;
+    max-height: 100%;
+    overflow: auto; 
+      /* Ensures the <pre> element doesn't exceed the parent width */
+}
+
+
+.qa-right-child2{
+    margin-top: 10px;
+    height: 20%;
+
+}
+
+/* Style labels */
+
+/* Style select elements */
+
+
+/* Style button */
+button {
+    background-color: #007BFF; /* Button background color */
+    color: white; /* Text color */
+    padding: 10px 20px; /* Padding for button */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1em; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+/* Change button color on hover */
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
