@@ -1,50 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/userLog.css') }}">
-      <title>Interact With Text</title>
-
-   </head>
-
-
-   <div class = "main-parent">
-
-   
-
-    <div class = "qa-child-parent-right">
-    
-        <div class = "qa-right-child1">
-    
-            <div class= "output">
-            <p>Output: {{queryResponse}}</p>
-            </div>
-            <div class ="f">
-    <form action="/getRec" class = "f" method="post">
-
-        <input type="text" id="user_query" name="user_query" placeholder="Enter question here" class="text-field">
-        <input type="submit" value="Send Question" class="submit-btn">
-        </form>
+{% extends "base.html" %}
+{% block title %}Progress & Recommendations{% endblock %}
+{% block content %}
+<section class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <p class="text-sm text-slate-500">Scores, missed topics, and recommendations</p>
+      <h1 class="text-3xl font-bold text-midnight">Progress & Recommendations</h1>
     </div>
-      
-    </div>  
-   
+  </div>
 
-    <div class = "qa-right-child2">
-        <p> Scores: {{s}} </p>
-        <p> Highest Score: {{s1}} / 100 </p>
-        <p> Mean: {{s2}} / 100 </p>
-        <p> Median: {{s3}} / 100 </p>
-        <p> StdDev {{s4}} / 100 </p>
+  <div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-sm space-y-4">
+      <h2 class="text-lg font-semibold text-midnight">Ask for recommendations</h2>
+      <form action="/getRec" method="post" class="space-y-3">
+        <label class="block text-sm font-semibold text-slate-700">Prompt</label>
+        <input type="text" id="user_query" name="user_query" placeholder="e.g. What should I revise next?" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400" required>
+        <button type="submit" class="w-full rounded-xl bg-sky-500 text-white font-semibold py-2.5 shadow-lg shadow-sky-200 hover:bg-sky-600 transition">Get recommendation</button>
+      </form>
+      <div class="rounded-xl bg-slate-50 border border-slate-100 p-4 min-h-[120px]">
+        {% if queryResponse %}
+          <p class="text-sm text-slate-700 whitespace-pre-wrap">{{ queryResponse }}</p>
+        {% else %}
+          <p class="text-sm text-slate-500">Recommendations will appear here.</p>
+        {% endif %}
+      </div>
     </div>
 
+    <div class="rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-sm space-y-3">
+      <h2 class="text-lg font-semibold text-midnight">Scores</h2>
+      <p class="text-sm text-slate-700">Scores: {{ s }}</p>
+      <p class="text-sm text-slate-700">Highest Score: {{ s1 }}/100</p>
+      <p class="text-sm text-slate-700">Mean: {{ s2 }}/100</p>
+      <p class="text-sm text-slate-700">Median: {{ s3 }}/100</p>
+      <p class="text-sm text-slate-700">StdDev: {{ s4 }}/100</p>
     </div>
- 
-    </div>
-
-
-
-   
-</html>
+  </div>
+</section>
+{% endblock %}

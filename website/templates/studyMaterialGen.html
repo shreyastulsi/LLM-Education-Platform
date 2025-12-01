@@ -1,70 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Material Generator</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/studyMaterialGen.css') }}">
-    <script>
-        function toggleAnswers() {
-            var checkBox = document.getElementById("show_answers");
-            var answers = document.getElementById("answers_section");
-            if (checkBox.checked == true){
-                answers.style.display = "block";
-            } else {
-                answers.style.display = "none";
-            }
-        }
-    </script>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Study Material Generator{% endblock %}
+{% block content %}
+<section class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <p class="text-sm text-slate-500">Create MCQ, vocab, or free-response sets.</p>
+      <h1 class="text-3xl font-bold text-midnight">Study Material Generator</h1>
+    </div>
+  </div>
 
-    <main>
-        <div class="flex-parent-main">
+  <div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-1">
+      <form action="/studyMaterialGen" method="post" class="space-y-4 rounded-2xl border border-slate-100 bg-white/90 p-5 shadow-sm">
+        <label class="block text-sm font-semibold text-slate-700 mb-1">Question type</label>
+        <select name="gen_type" id="gen_type" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400">
+          <option value="1">Multiple Choice</option>
+          <option value="2">Vocab / Short Answer</option>
+          <option value="3">Free Response</option>
+        </select>
 
-                
-                <form action="/studyMaterialGen" class = "form-child" method="post">
-                    <div class= "form-child-left" >
+        <label class="block text-sm font-semibold text-slate-700 mb-1">Number of questions</label>
+        <input type="number" id="num_q" name="num_q" required min="1" max="50" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400">
 
-               
-                   <select name="gen_type" class = "form-child-2" id="gen_type">
-                        <option value="1">Multiple Choice</option>
-                        <option value="2">Short Answers</option>
-                        <option value="3">Essay style</option>
-                    </select> 
-                 </div>
+        <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input type="checkbox" id="show_answers" onclick="toggleAnswers()" class="rounded border-slate-300 text-sky-500 focus:ring-sky-400">
+          Show answers
+        </label>
 
-                    <div class ="form-child-right">
-                   
-           
-                    <label for="num_q" class = "form-child-3">Number of Questions</label>
-                    <input type="number" class = "form-child-4" id="num_q" name="num_q" required>
-           
-                    <label for="show_answers" class = "form-child-5" >Reveal Answers</label>
-                    <input type="checkbox"  class = "form-child-6"id="show_answers" onclick="toggleAnswers()">
-              
-                    <button class = "form-child-7 "type="submit">Generate</button>
-                </div>
+        <button type="submit" class="w-full rounded-xl bg-sky-500 text-white font-semibold py-2.5 shadow-lg shadow-sky-200 hover:bg-sky-600 transition">Generate</button>
+      </form>
+    </div>
 
-                <div class ="form-child-end">
-                </div>
-                </form>
-                
-            <section class = "questions-child">
-                <p class="generated-content"> <pre>{{ questions }}</pre></p>
-                
-
-            </section>
-            <section class = "answers-child" id = "answers_section" style="display:none!important" >
-                
-                <p "generated-content" >ANSWERS</p>
-                <br>
-                <p class="generated-content"> <pre>{{ answers }}</pre></p>
-
-            </section>
-
+    <div class="lg:col-span-2 space-y-4">
+      <div class="rounded-2xl border border-slate-100 bg-white/90 p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-semibold text-midnight">Questions</h2>
         </div>
-    </main>
+        <pre class="whitespace-pre-wrap text-slate-700 text-sm leading-relaxed">{{ questions }}</pre>
+      </div>
 
-</body>
-</html>
+      <div id="answers_section" class="rounded-2xl border border-slate-100 bg-white/90 p-5 shadow-sm" style="display:none!important">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-semibold text-midnight">Answers</h2>
+        </div>
+        <pre class="whitespace-pre-wrap text-slate-700 text-sm leading-relaxed">{{ answers }}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function toggleAnswers() {
+    const checkBox = document.getElementById("show_answers");
+    const answers = document.getElementById("answers_section");
+    answers.style.display = checkBox.checked ? "block" : "none";
+  }
+</script>
+{% endblock %}

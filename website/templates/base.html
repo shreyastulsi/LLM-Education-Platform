@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}LLM Learning Studio{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            midnight: '#0f172a',
+            sunrise: '#f97316',
+            sky: '#22d3ee',
+            mint: '#34d399',
+            cloud: '#f8fafc',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-sky-50 via-white to-mint-50 text-midnight">
+  <header class="border-b border-slate-200/70 bg-white/80 backdrop-blur">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="{{ url_for('home.index') }}" class="flex items-center gap-2">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-sky-400 to-sunrise shadow-lg flex items-center justify-center text-white font-bold">L</div>
+        <div>
+          <p class="text-lg font-semibold">LLM Learning Studio</p>
+          <p class="text-xs text-slate-500">Personalized study companion</p>
+        </div>
+      </a>
+      <nav class="flex items-center gap-4 text-sm font-medium text-slate-600">
+        <a class="hover:text-midnight transition" href="{{ url_for('home.index') }}">Home</a>
+        <a class="hover:text-midnight transition" href="{{ url_for('handleUpload.get_file') }}">Upload</a>
+        <a class="hover:text-midnight transition" href="{{ url_for('studyMaterialGen.home') }}">Generator</a>
+        <a class="hover:text-midnight transition" href="{{ url_for('interactWithText.home') }}">Chat</a>
+        <a class="hover:text-midnight transition" href="{{ url_for('reactiveTest.index') }}">Adaptive Test</a>
+        <a class="hover:text-midnight transition" href="{{ url_for('userLog.home') }}">Progress</a>
+      </nav>
+      <div class="flex items-center gap-3 text-sm text-slate-600">
+        {% if session.get("user_email") %}
+          <span class="hidden sm:inline text-slate-500">{{ session.get("user_email") }}</span>
+          <a class="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50" href="{{ url_for('auth.logout') }}">Logout</a>
+        {% else %}
+          <a class="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50" href="{{ url_for('auth.login') }}">Login</a>
+          <a class="px-3 py-1.5 rounded-lg bg-sky-500 text-white shadow-sm hover:bg-sky-600" href="{{ url_for('auth.signup') }}">Sign up</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-2 mb-6">
+          {% for category, message in messages %}
+            <div class="rounded-xl border border-sky-100 bg-white/90 shadow-sm px-4 py-3 text-slate-700">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

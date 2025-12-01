@@ -1,37 +1,29 @@
 from flask import Flask, request, render_template_string, redirect, url_for, session, Blueprint, render_template
 import os
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
+from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 import matplotlib.pyplot as plt
-from langchain import hub
 import numpy as np
 import pandas as pd
-from langchain_experimental.agents.agent_toolkits.python.base import create_python_agent
 from langchain_openai import OpenAI
-from langchain_openai import ChatOpenAI
 import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import YoutubeLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.agents import AgentExecutor, create_react_agent
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 embeddings = OpenAIEmbeddings()
 from dotenv import load_dotenv
 load_dotenv()
-os.environ['OPENAI_API_KEY']
-os.environ["SERPER_API_KEY"] = "7150885e8711a9b49a52871eb4c912575d9a0631"
+if not os.getenv("OPENAI_API_KEY"):
+    raise EnvironmentError("OPENAI_API_KEY not set. Add it to your .env file.")
+if not os.getenv("SERPER_API_KEY"):
+    raise EnvironmentError("SERPER_API_KEY not set. Add it to your .env file.")
 from .testing import create_db_from_pdf, get_response_from_query, create_db_from_youtube_video_url, provide_analysis
 from .studyMaterialGen import format_questions
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 import csv
-from langchain_core.tools import Tool
-from langchain_experimental.utilities import PythonREPL
-from langchain_experimental.tools import PythonREPLTool
 import re
+from .supabase_client import save_test_result, fetch_test_results
 userLog = Blueprint('userLog', __name__)
 
 @userLog.route('/userLog')
@@ -40,6 +32,7 @@ def home():
     print(session['total_scores'])
     print(session['mini_section_scores'])
     print(session['missed_topics'])
+    user_id = session.get("user_id", "anon")
     def clean_input(input_list):
         cleaned_list = []
         for item in input_list:
@@ -49,50 +42,39 @@ def home():
         return cleaned_list
         import csv
 
-    def write_scores_to_csv(total_scores, mini_section_scores, missed_topics, filename='/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/userLog.csv'):
-        # Find the maximum length among the lists
-        max_length = max(len(total_scores), len(mini_section_scores), len(missed_topics))
-        
-        # Extend each list to match the maximum length, filling missing values with 'N/A'
-        total_scores.extend([''] * (max_length - len(total_scores)))
-        mini_section_scores.extend([''] * (max_length - len(mini_section_scores)))
-        missed_topics.extend([''] * (max_length - len(missed_topics)))
-        
-        # Define the header
-        header = ['Main-Test', 'Side-Test', 'Missed-Topics']
-
-        # Combine the data into rows
-        rows = zip(total_scores, mini_section_scores, missed_topics)
-        
-        # Write to the CSV file
-        with open(filename, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(header)  # Write the header
-            writer.writerows(rows)   # Write the rows
-
     # Example inputs
-    total_scores = session['total_scores']
-    mini_section_scores = session['mini_section_scores']
-    missed_topics = clean_input(session['missed_topics'])
+    total_scores = session.get('total_scores', [])
+    mini_section_scores = session.get('mini_section_scores', [])
+    missed_topics = clean_input(session.get('missed_topics', []))
 
-    # Call the function to save the data to 'scores.csv'
-    write_scores_to_csv(total_scores, mini_section_scores, missed_topics)
+    # Persist latest snapshot to Supabase
+    main_score = total_scores[-1] if total_scores else None
+    side_score = mini_section_scores[-1] if mini_section_scores else None
+    topics_str = missed_topics[-1] if missed_topics else ""
+    if main_score is not None:
+        try:
+            save_test_result(user_id, main_score, side_score, topics_str)
+        except Exception as exc:
+            print("Failed to save test result:", exc)
 
+    rows = fetch_test_results(user_id)
+    scores = [r.get("main_score") for r in rows if r.get("main_score") is not None]
+    high = max(scores) if scores else 0
+    mean = float(np.mean(scores)) if scores else 0
+    median = float(np.median(scores)) if scores else 0
+    std = float(np.std(scores)) if scores else 0
 
-
-
-    return render_template("userLog.html", s=session['total_scores'],s2="3", s3="3", s4="4")
+    return render_template("userLog.html", s=scores, s1=high, s2=round(mean, 2), s3=round(median, 2), s4=round(std, 2))
     
     
     
 @userLog.route('/getRec', methods=['POST'])
 def chatRec():
 
-    df = pd.read_csv(
-    "/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/userLog.csv"
-    )
-    
-    
+    user_id = session.get("user_id", "anon")
+    rows = fetch_test_results(user_id)
+    df = pd.DataFrame(rows) if rows else pd.DataFrame(columns=["main_score", "side_score", "missed_topics"])
+        
     query = request.form.get("user_query")
     agent = create_pandas_dataframe_agent(OpenAI(temperature=0), df, verbose=True, allow_dangerous_code=True)
     response = (agent.invoke({"input": query}))['output']

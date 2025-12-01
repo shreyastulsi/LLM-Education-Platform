@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Home · LLM Learning Studio{% endblock %}
+{% block content %}
+<section class="grid md:grid-cols-2 gap-8 items-center">
+  <div class="space-y-4">
+    <p class="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm text-slate-600 shadow-sm border border-slate-200/70">
+      <span class="h-2 w-2 rounded-full bg-sky-400 animate-pulse"></span>
+      AI-powered study companion
+    </p>
+    <h1 class="text-4xl md:text-5xl font-bold text-midnight leading-tight">
+      Generate study guides, chat over content, and take adaptive tests—all in one place.
+    </h1>
+    <p class="text-lg text-slate-600 max-w-xl">
+      Upload a PDF or YouTube lecture, generate practice questions, get explanations, and track your progress with personalized feedback.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a href="{{ url_for('handleUpload.get_file') }}" class="px-4 py-2.5 rounded-xl bg-sky-500 text-white font-semibold shadow-lg shadow-sky-200 hover:bg-sky-600 transition">Start by uploading</a>
+      <a href="{{ url_for('studyMaterialGen.home') }}" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-midnight font-semibold shadow-sm hover:-translate-y-0.5 transition">Generate questions</a>
+    </div>
+    <div class="grid grid-cols-2 gap-4 pt-4 text-sm text-slate-600">
+      <div class="rounded-2xl bg-white/80 p-4 shadow-sm border border-slate-100">
+        <p class="font-semibold text-midnight">Study Material</p>
+        <p>Create MCQ, vocab, or free-response sets from your sources.</p>
+      </div>
+      <div class="rounded-2xl bg-white/80 p-4 shadow-sm border border-slate-100">
+        <p class="font-semibold text-midnight">Adaptive Testing</p>
+        <p>Auto-generate tests, score them, and get targeted feedback.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rounded-3xl border border-sky-100 bg-white/80 shadow-xl p-6 space-y-4">
+    <div class="flex items-center justify-between">
+      <p class="text-sm font-semibold text-slate-600">Quick actions</p>
+      <span class="text-xs px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100">Live</span>
+    </div>
+    <div class="grid sm:grid-cols-2 gap-3">
+      <a href="{{ url_for('interactWithText.home') }}" class="block rounded-2xl border border-slate-100 bg-gradient-to-br from-white to-sky-50 p-4 shadow-sm hover:shadow-md transition">
+        <p class="text-sm font-semibold text-midnight">Chat with content</p>
+        <p class="text-xs text-slate-600 mt-1">Ask questions about your PDF or lecture.</p>
+      </a>
+      <a href="{{ url_for('reactiveTest.index') }}" class="block rounded-2xl border border-slate-100 bg-gradient-to-br from-white to-mint-50 p-4 shadow-sm hover:shadow-md transition">
+        <p class="text-sm font-semibold text-midnight">Take a test</p>
+        <p class="text-xs text-slate-600 mt-1">Auto-generated MCQs with instant feedback.</p>
+      </a>
+      <a href="{{ url_for('userLog.home') }}" class="block rounded-2xl border border-slate-100 bg-gradient-to-br from-white to-orange-50 p-4 shadow-sm hover:shadow-md transition">
+        <p class="text-sm font-semibold text-midnight">Progress & logs</p>
+        <p class="text-xs text-slate-600 mt-1">See scores and missed topics.</p>
+      </a>
+      <a href="{{ url_for('handleUpload.get_file') }}" class="block rounded-2xl border border-slate-100 bg-gradient-to-br from-white to-indigo-50 p-4 shadow-sm hover:shadow-md transition">
+        <p class="text-sm font-semibold text-midnight">Upload sources</p>
+        <p class="text-xs text-slate-600 mt-1">PDFs or YouTube links.</p>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

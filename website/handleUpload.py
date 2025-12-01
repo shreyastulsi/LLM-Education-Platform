@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, Flask
-import os
+from flask import Blueprint, render_template, request, Flask, session
+from .supabase_client import upload_bytes, record_source
 
 
 
@@ -9,22 +9,20 @@ handleUpload = Blueprint('handleUpload', __name__)
 
 @handleUpload.route('/handleUpload', methods=['GET','POST'])
 def get_file():
+    user_id = session.get("user_id", "anon")
     
     if request.method == 'POST':
         
         if 'pdf_file' in request.files and request.files['pdf_file'].filename != '':
             file = request.files['pdf_file']
-            file.save('/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/currfile.pdf')
-            if os.path.exists("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/ytlink.txt"):
-                os.remove("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/ytlink.txt")
+            data = file.read()
+            storage_key = upload_bytes(user_id, file.filename, data)
+            record_source(user_id, source_type="pdf", storage_path=storage_key)
             return render_template("studyMaterialGen.html")
             
         else:
             youtube_link=request.form['youtube_link']
-            with open("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/ytlink.txt", "w") as file:
-                file.write(youtube_link)
-            if os.path.exists("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/currfile.pdf"):
-                os.remove("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/currfile.pdf")
+            record_source(user_id, source_type="youtube", youtube_url=youtube_link)
             return render_template("studyMaterialGen.html")
             
     

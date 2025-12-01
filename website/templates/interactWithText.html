@@ -1,45 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Interact With Text</title>
-      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/interactWithText.css') }}">
-   </head>
-
-   <main>
-   
-  
-   <div class ="flex-parent-chat-window">
-   
-    <div class ="flex-child-output">
-        <p> 
-            <pre>{{ response }}</pre>
-            </p>
-   
+{% extends "base.html" %}
+{% block title %}Chat with Content{% endblock %}
+{% block content %}
+<section class="grid lg:grid-cols-3 gap-6 items-start">
+  <div class="lg:col-span-2 rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-sm min-h-[320px]">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <p class="text-sm text-slate-500">Ask questions about your uploaded source</p>
+        <h1 class="text-2xl font-semibold text-midnight">Chat with your content</h1>
+      </div>
     </div>
-    <div class ="flex-child-form">
-   
-    
-    <form action="/interactWithText" class = "f" method="post">
-
-        <input type="text" id="user_query" name="user_query" placeholder="Enter question here" class="text-field">
-        <input type="submit" value="Send Question" class="submit-btn">
-
-
-        </form>
-
-
-
- 
+    <div class="rounded-xl bg-slate-50 border border-slate-100 p-4 min-h-[220px]">
+      {% if response %}
+        <pre class="whitespace-pre-wrap text-slate-700 text-sm leading-relaxed">{{ response }}</pre>
+      {% else %}
+        <p class="text-slate-500 text-sm">Responses will appear here after you ask a question.</p>
+      {% endif %}
     </div>
+  </div>
 
-    </div>
-
- 
-    
-   
-</main>
-   
-</html>
+  <div class="rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-sm space-y-4">
+    <h2 class="text-lg font-semibold text-midnight">Ask a question</h2>
+    <form action="/interactWithText" method="post" class="space-y-3">
+      <label class="block text-sm font-semibold text-slate-700">Your question</label>
+      <input type="text" id="user_query" name="user_query" placeholder="e.g. Summarize the key concepts from section 3" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400" required>
+      <button type="submit" class="w-full rounded-xl bg-sky-500 text-white font-semibold py-2.5 shadow-lg shadow-sky-200 hover:bg-sky-600 transition">Send</button>
+    </form>
+    <p class="text-xs text-slate-500">Uses the currently uploaded PDF or YouTube transcript.</p>
+  </div>
+</section>
+{% endblock %}

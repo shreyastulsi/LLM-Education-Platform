@@ -1,16 +1,11 @@
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import YoutubeLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_community.chat_models import ChatOpenAI
-from langchain.chains import LLMChain
 from dotenv import find_dotenv, load_dotenv
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
+from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 
 import textwrap
 
@@ -68,9 +63,10 @@ def get_response_from_query(db, query, focus, k=4):
         [system_message_prompt, human_message_prompt]
     )
 
-    chain = LLMChain(llm=chat, prompt=chat_prompt, verbose=True)
+    chain = chat_prompt | chat
 
-    response = chain.run(question=query, docs=docs_page_content, foc = focus)
+    response_msg = chain.invoke({"question": query, "docs": docs_page_content, "foc": focus})
+    response = getattr(response_msg, "content", str(response_msg))
 
     response = response.replace("\n", "")
 

@@ -2,7 +2,15 @@ from flask import Blueprint, render_template, request, session
 import os
 from .testing import create_db_from_pdf, create_db_from_youtube_video_url, get_response_from_query
 import re
+from .source_utils import load_db_for_user
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PDF_PATH = os.path.join(BASE_DIR, "currfile.pdf")
+YT_PATH = os.path.join(BASE_DIR, "ytlink.txt")
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PDF_PATH = os.path.join(BASE_DIR, "currfile.pdf")
+YT_PATH = os.path.join(BASE_DIR, "ytlink.txt")
 
 
 
@@ -70,19 +78,8 @@ def home():
         gen_type = int(request.form.get('gen_type'))
         num_q = int(request.form.get('num_q'))
         query = ""
-        yt_url=""
-        pdf_url=""
-        uploadMethod = 0
-      
-
-
-        if os.path.exists("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/ytlink.txt"):
-            with open("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/ytlink.txt", "r") as file:
-                yt_url = file.readline()
-                uploadMethod=1
-        elif os.path.exists("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/currfile.pdf"):
-            pdf_url = "/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/currfile.pdf"
-            uploadMethod=2
+        user_id = session.get("user_id", "anon")
+        db = load_db_for_user(user_id)
         
 
         
@@ -127,14 +124,6 @@ def home():
             repeat this for {num_q}
            
             """
-  
-        if uploadMethod==1:
-            db = create_db_from_youtube_video_url(yt_url)
-           
-        else:
-            db = create_db_from_pdf(pdf_url)
-           
-        
         response = get_response_from_query(db, query, "")
         print(response)
         formatted_response, formatted_answers = format_questions(response, gen_type)

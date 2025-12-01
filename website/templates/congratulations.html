@@ -1,28 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Interact With Text</title>
-
-   </head>
-
-   <main>
-   
-  <h1> Hello </h1>
-
-
-  <form action="/submitTest" method="post">
-
-
-
-
-
-
-    <p> {{score}}} </p>  
-
-
-</main>
-   
-</html>
+{% extends "base.html" %}
+{% block title %}Congratulations{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <div class="rounded-3xl border border-sky-100 bg-white/90 shadow-xl p-8 text-center space-y-4">
+    <div class="inline-flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-mint-500 text-white font-bold text-2xl mx-auto shadow-lg">✓</div>
+    <h1 class="text-3xl font-bold text-midnight">Congratulations!</h1>
+    <p class="text-slate-600">You completed the test with a score of <span class="font-semibold text-midnight">{{ score }}/100</span>.</p>
+    <div class="flex justify-center gap-3 pt-2">
+      <a href="{{ url_for('reactiveTest.index') }}" class="px-4 py-2.5 rounded-xl bg-sky-500 text-white font-semibold shadow-lg shadow-sky-200 hover:bg-sky-600 transition">Take another test</a>
+      <a href="{{ url_for('home.index') }}" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-midnight font-semibold shadow-sm hover:-translate-y-0.5 transition">Back to home</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

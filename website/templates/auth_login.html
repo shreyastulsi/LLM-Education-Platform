@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto">
+  <div class="rounded-2xl border border-slate-100 bg-white/90 shadow-sm p-6 space-y-4">
+    <div>
+      <p class="text-sm text-slate-500">Welcome back</p>
+      <h1 class="text-2xl font-bold text-midnight">Log in</h1>
+    </div>
+    <form action="{{ url_for('auth.login') }}" method="post" class="space-y-3">
+      <label class="block text-sm font-semibold text-slate-700">Email</label>
+      <input type="email" name="email" required class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400">
+      <label class="block text-sm font-semibold text-slate-700">Password</label>
+      <input type="password" name="password" required class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400">
+      <button type="submit" class="w-full rounded-xl bg-sky-500 text-white font-semibold py-2.5 shadow-lg shadow-sky-200 hover:bg-sky-600 transition">Login</button>
+    </form>
+    <p class="text-sm text-slate-600">No account? <a class="text-sky-600 hover:underline" href="{{ url_for('auth.signup') }}">Sign up</a></p>
+  </div>
+</div>
+{% endblock %}

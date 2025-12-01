@@ -1,10 +1,6 @@
 from flask import Flask, request, render_template_string, redirect, url_for, session, Blueprint, render_template, flash
 import os
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
+from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 
 import pandas as pd
 from langchain_openai import OpenAI
@@ -12,16 +8,19 @@ from langchain_openai import ChatOpenAI
 import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import YoutubeLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 embeddings = OpenAIEmbeddings()
 from dotenv import load_dotenv
 load_dotenv()
-os.environ['OPENAI_API_KEY']
-os.environ["SERPER_API_KEY"] = "7150885e8711a9b49a52871eb4c912575d9a0631"
+if not os.getenv("OPENAI_API_KEY"):
+    raise EnvironmentError("OPENAI_API_KEY not set. Add it to your .env file.")
+if not os.getenv("SERPER_API_KEY"):
+    raise EnvironmentError("SERPER_API_KEY not set. Add it to your .env file.")
 from .testing import create_db_from_pdf, get_response_from_query, create_db_from_youtube_video_url, provide_analysis
 from .studyMaterialGen import format_questions
+from .source_utils import load_db_for_user
 
 
 
@@ -46,23 +45,18 @@ query= """Contruct 5 MCQ Questions & Answers on this specific topic, using this 
 
 
 
-if os.path.exists("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/ytlink.txt"):
-    with open("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/ytlink.txt", "r") as file:
-            yt_url = file.readline()
-            uploadMethod=1
-elif os.path.exists("/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/currfile.pdf"):
-    pdf_url = "/Users/shreyastulsi/Desktop/LangchainProfessional/experiments/educationGPT/website/currfile.pdf"
-    print('Working')
-    uploadMethod=2
-    
-if uploadMethod==1:
-    db = create_db_from_youtube_video_url(yt_url)        
-else:
-    db = create_db_from_pdf(pdf_url)
+db = None
 
-print(uploadMethod)
+def _load_db():
+    """Lazy-load vector store from Supabase-backed source."""
+    global db
+    if db is None:
+        user_id = session.get("user_id", "anon")
+        db = load_db_for_user(user_id)
+    return db
 @reactiveTest.route('/initialTest')
 def index():
+    db_instance = _load_db()
     
     if 'total_scores' not in session:
         session['total_scores'] = []
@@ -80,7 +74,7 @@ def index():
             
     if 'main' not in session:
         session['main']= ""
-    initial_test_q, initial_test_a = format_questions(get_response_from_query(db, query,session['feedback']), 1)
+    initial_test_q, initial_test_a = format_questions(get_response_from_query(db_instance, query,session['feedback']), 1)
     session['questions']= initial_test_q
     
     
@@ -219,5 +213,3 @@ def adjusted_test():
                     
 #         Come back to a new test
 #     """
-
-
