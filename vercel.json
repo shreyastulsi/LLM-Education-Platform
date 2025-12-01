@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.py": {
-      "runtime": "python3.11"
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python@4.0.0",
+      "config": { "runtime": "python3.11" }
     }
-  },
+  ],
   "routes": [
     { "src": "/(.*)", "dest": "/api/index.py" }
   ]
