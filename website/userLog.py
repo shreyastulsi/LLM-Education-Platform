@@ -1,29 +1,18 @@
 from flask import Flask, request, render_template_string, redirect, url_for, session, Blueprint, render_template
 import os
-from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-from langchain_openai import OpenAI
-import os
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.document_loaders import YoutubeLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import FAISS
-embeddings = OpenAIEmbeddings()
+import json
+import statistics
+import re
 from dotenv import load_dotenv
+from langchain_openai import OpenAI
+
+from .supabase_client import save_test_result, fetch_test_results
+
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
     raise EnvironmentError("OPENAI_API_KEY not set. Add it to your .env file.")
 if not os.getenv("SERPER_API_KEY"):
     raise EnvironmentError("SERPER_API_KEY not set. Add it to your .env file.")
-from .testing import create_db_from_pdf, get_response_from_query, create_db_from_youtube_video_url, provide_analysis
-from .studyMaterialGen import format_questions
-from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
-import csv
-import re
-from .supabase_client import save_test_result, fetch_test_results
 userLog = Blueprint('userLog', __name__)
 
 @userLog.route('/userLog')
@@ -60,9 +49,9 @@ def home():
     rows = fetch_test_results(user_id)
     scores = [r.get("main_score") for r in rows if r.get("main_score") is not None]
     high = max(scores) if scores else 0
-    mean = float(np.mean(scores)) if scores else 0
-    median = float(np.median(scores)) if scores else 0
-    std = float(np.std(scores)) if scores else 0
+    mean = float(statistics.mean(scores)) if scores else 0
+    median = float(statistics.median(scores)) if scores else 0
+    std = float(statistics.pstdev(scores)) if len(scores) > 1 else 0
 
     return render_template("userLog.html", s=scores, s1=high, s2=round(mean, 2), s3=round(median, 2), s4=round(std, 2))
     
@@ -73,9 +62,14 @@ def chatRec():
 
     user_id = session.get("user_id", "anon")
     rows = fetch_test_results(user_id)
-    df = pd.DataFrame(rows) if rows else pd.DataFrame(columns=["main_score", "side_score", "missed_topics"])
-        
     query = request.form.get("user_query")
-    agent = create_pandas_dataframe_agent(OpenAI(temperature=0), df, verbose=True, allow_dangerous_code=True)
-    response = (agent.invoke({"input": query}))['output']
+    llm = OpenAI(temperature=0)
+
+    if not rows:
+        response = "No test results found yet. Take a test first."
+    else:
+        formatted_rows = json.dumps(rows)
+        prompt = f"You are assisting with user test history.\nData: {formatted_rows}\nUser question: {query}\nAnswer concisely using only the provided data."
+        response = llm.invoke(prompt)
+
     return render_template("userLog.html", queryResponse=response)

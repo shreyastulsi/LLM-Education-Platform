@@ -3,7 +3,6 @@ python-dotenv
 langchain-core
 langchain
 langchain-community
-langchain-experimental
 langchain-openai
 langchain-text-splitters
 openai
@@ -12,9 +11,6 @@ pypdf
 tiktoken
 pytube
 youtube-transcript-api
-pandas
-numpy
-matplotlib
 serverless-wsgi
 supabase
 storage3

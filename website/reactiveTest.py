@@ -1,26 +1,19 @@
 from flask import Flask, request, render_template_string, redirect, url_for, session, Blueprint, render_template, flash
 import os
 from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
-
-import pandas as pd
 from langchain_openai import OpenAI
 from langchain_openai import ChatOpenAI
-import os
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.document_loaders import YoutubeLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import FAISS
-embeddings = OpenAIEmbeddings()
 from dotenv import load_dotenv
+
+from .testing import create_db_from_pdf, get_response_from_query, create_db_from_youtube_video_url, provide_analysis
+from .studyMaterialGen import format_questions
+from .source_utils import load_db_for_user
+
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
     raise EnvironmentError("OPENAI_API_KEY not set. Add it to your .env file.")
 if not os.getenv("SERPER_API_KEY"):
     raise EnvironmentError("SERPER_API_KEY not set. Add it to your .env file.")
-from .testing import create_db_from_pdf, get_response_from_query, create_db_from_youtube_video_url, provide_analysis
-from .studyMaterialGen import format_questions
-from .source_utils import load_db_for_user
 
 
 
