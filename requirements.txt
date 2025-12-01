@@ -15,6 +15,6 @@ youtube-transcript-api
 pandas
 numpy
 matplotlib
-vercel-wsgi
+serverless-wsgi
 supabase
 storage3
